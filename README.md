@@ -5,6 +5,9 @@
 образ `mlxini-ghidra-irisc` — Ghidra 12.1.3 (SHA-пин) + JDK 21
 (SHA-пин) + процессор iRISC + java entrypoint-скрипты Ghidra.
 
+Разработка ведётся из приватного репозитория-источника; имя тега
+образа — историческое.
+
 ## Канон
 
 - Канон slaspec — патч
@@ -45,15 +48,17 @@ make image    # docker/ghidra-irisc.containerfile -> тег mlxini-ghidra-irisc
 
 ## Bump пинов патча
 
-Процедура: мёрж-волна патча в mlxini → новый публичный снапшот
-mlxfwinternals → обновить дефолты `SLASPEC_PATCH_URL` и
-`SLASPEC_PATCH_SHA256` в Makefile этого репо (URL нового снапшота +
-sha256 патча из него). Пины тарболла синдиката меняются только при
-смене upstream.
+Процедура: патч в mlxfwinternals обновился (новый снапшот@SHA) →
+обновить дефолты `SLASPEC_PATCH_URL` и `SLASPEC_PATCH_SHA256` в
+Makefile этого репо (URL нового снапшота + sha256 патча из него).
+Пины тарболла синдиката меняются только при смене upstream.
 
 ## Лицензия
 
 - Лицензия этого репозитория — GPL-3.0 (см. [`LICENSE`](LICENSE)).
+- Благодарность [irisc-research-syndicate](https://github.com/irisc-research-syndicate):
+  их реверс-инжиниринг iRISC ISA и модуль `ghidra-processor` — основа
+  этого пайплайна, без их работы репозитория бы не было. Спасибо.
 - Upstream-модуль `ghidra-processor` синдиката не лицензирован: нам
   отказали (issue
   [`irisc-research-syndicate/mlx5cmd#1`](https://github.com/irisc-research-syndicate/mlx5cmd/issues/1),
@@ -61,28 +66,26 @@ sha256 патча из него). Пины тарболла синдиката �
   дельту (патч) и собственный код; готовый образ с их модулем внутри
   не редистрибутировать.
 
-## Контракт потребления (mlxini)
+## Контракт потребления (mlxfwinternals)
 
-- mlxini не собирает образ: при отсутствии тега цели-потребители
+- mlxfwinternals не собирает образ: при отсутствии тега цели-потребители
   (`ghidra-decode`, `ghidra-re`, …) падают с hint на этот репозиторий.
 - Чекаут сиблинга: переменная `GHIDRA_CONTAINER_DIR` (дефолт
-  `../ghidra-container`, override в `local.mk` mlxini).
+  `../ghidra-container`, override в `local.mk` mlxfwinternals).
 - Dev-цикл java-скриптов: правки `scripts/ghidra/*.java` — здесь;
-  `make ghidra-decode-dev` в mlxini монтирует `scripts/ghidra` этого
-  чекаута поверх запечённых скриптов (проверка сиблинга — guard-ом,
-  podman не должен молча шадоить запечённые скрипты пустым каталогом) —
-  итерации без пересборки образа.
+  `make ghidra-decode-dev` в mlxfwinternals монтирует `scripts/ghidra`
+  этого чекаута поверх запечённых скриптов (проверка сиблинга —
+  guard-ом, podman не должен молча шадоить запечённые скрипты пустым
+  каталогом) — итерации без пересборки образа.
 
-## Crosscheck ISA (mlxini)
+## Crosscheck ISA (mlxfwinternals)
 
-Канон slaspec — патч в mlxfwinternals, канон декодера
-(`irisc_dis.py`/`enc.py`) — в mlxini; ISA меняются синхронно:
+Канон slaspec — патч, канон декодера (`irisc_dis.py`/`enc.py`) —
+оба в mlxfwinternals; ISA меняются синхронно:
 
-1. изменить оба канона (патч и декодер — в mlxini); патч
-   уезжает в mlxfwinternals мёрж-волной;
-2. в mlxini — `make slaspec-gen` (материализует локальные
-   slaspec-копии из патча) → `make irisc-crosscheck IMG=<fw-image>`:
-   отчёт штампует `ghidra_container_rev` (rev этого чекаута);
-   зафиксировать rev-пару (rev mlxini + rev ghidra-container) в
-   описании изменения — дрейф против устаревшего сиблинга виден в
-   каждом отчёте.
+1. изменить оба канона (патч и декодер — в mlxfwinternals);
+2. `make slaspec-gen` (материализует локальные slaspec-копии из
+   патча) → `make irisc-crosscheck IMG=<fw-image>`: отчёт штампует
+   `ghidra_container_rev` (rev этого чекаута); зафиксировать rev-пару
+   (rev mlxfwinternals + rev ghidra-container) в описании изменения —
+   дрейф против устаревшего сиблинга виден в каждом отчёте.
