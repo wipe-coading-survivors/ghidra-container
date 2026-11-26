@@ -1,0 +1,10 @@
+# Copy to local.mk (gitignored) and adjust. Defaults live in Makefile (?=).
+# Image tag built here and consumed by mlxini.
+#GHIDRA_IMAGE = mlxini-ghidra-irisc
+# Prep sources consumed by slaspec-prep (see README "Сборка"):
+# syndicate tarball + our slaspec patch. Any URL curl understands,
+# including file:// — build from the sources you want.
+#SYNDICATE_TARBALL_URL = https://codeload.github.com/irisc-research-syndicate/ghidra-processor/tar.gz/4c488a43cdbcef957519e3800c3ba796712d3abb
+#SYNDICATE_TARBALL_SHA256 = 666a5551aec5d907a220451e36a5692c1585817b1734d050137a294eb0d565fd
+#SLASPEC_PATCH_URL = https://raw.githubusercontent.com/wipe-coading-survivors/mlxfwinternals/bf9d1535ccd69f8f4b2b211dcc58c726d5ed56de/scripts/irisc/iRISC.slaspec.patch
+#SLASPEC_PATCH_SHA256 = 86b08d2cd0a178b55295d9da74880c467731b18965efe964ede5a163326e3362
